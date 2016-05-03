@@ -10,7 +10,7 @@ I understand that you are using Linux or Mac and you have installed on your mach
 
 So first of all clone this repository to your computer:
 ```
-$ git clone https://github.com/lassounski/foneticalmatch.git
+$ git clone https://github.com/lassounski/phoneticalmatch.git
 ```
 Next, access the folder and issue a Maven command to build the project:
 ```
