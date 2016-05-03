@@ -1,7 +1,8 @@
 package com.delaru.phoneticalmatch;
 
 import java.io.File;
-import java.util.Scanner;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -14,6 +15,16 @@ public class Main {
      */
     public static void main(String[] args) {
         validateArguments(args);
+
+        Set<String> words = new HashSet<String>();
+
+        for (int argsIndex = 0; argsIndex < args.length - 1; argsIndex++) {
+            words.add(args[argsIndex]);
+        }
+
+        String filePath = args[args.length - 1];
+        File dictionary = new File(filePath);
+        PhoneticalMatcher phoneticalMatcher = new PhoneticalMatcher(words, dictionary);
     }
 
     private static void validateArguments(String[] args) {
