@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -19,18 +20,22 @@ import java.util.logging.Logger;
  */
 public class PhoneticalMatcher {
 
-    private final Set<String> words;
-    private final File dictionaryFile;
+    private Set<String> argumentWords;
     private Set<String> dictionary;
+    private final File dictionaryFile;
 
     PhoneticalMatcher(Set<String> words, File dictionary) {
-        this.words = words;
+        this.argumentWords = words;
         this.dictionaryFile = dictionary;
         loadWordsFromFile();
     }
 
-    Set<String> getDictionary() {
+    public Set<String> getDictionary() {
         return dictionary;
+    }
+
+    public Set<String> getArgumentWords() {
+        return argumentWords;
     }
 
     private void loadWordsFromFile() {
@@ -40,6 +45,17 @@ public class PhoneticalMatcher {
             Logger.getLogger(PhoneticalMatcher.class.getName()).log(Level.SEVERE, "There was an error while reading the dictionary file", ex);
             System.exit(-1);
         }
+    }
+
+    public void normalize() {
+        LexicalNormalizer normalizer = new LexicalNormalizer();
+
+        dictionary = dictionary.stream()
+                .map(word -> normalizer.normalize(word))
+                .collect(Collectors.toSet());
+        argumentWords = argumentWords.stream()
+                .map(word -> normalizer.normalize(word))
+                .collect(Collectors.toSet());
     }
 
 }
