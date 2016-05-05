@@ -2,6 +2,8 @@ package com.delaru.phoneticalmatch;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,6 +27,8 @@ public class Main {
         String filePath = args[args.length - 1];
         File dictionary = new File(filePath);
         PhoneticalMatcher phoneticalMatcher = new PhoneticalMatcher(words, dictionary);
+        
+        print(phoneticalMatcher.getMatchedWords());
     }
 
     private static void validateArguments(String[] args) {
@@ -49,6 +53,20 @@ public class Main {
                 System.exit(-1);
             }
         }
+    }
+
+    private static void print(Map<String, List<String>> matchedWords) {
+        StringBuilder sb = new StringBuilder();
+        
+        matchedWords.forEach((argument, dictionaryWords) -> {
+            sb.append(argument).append(":");
+            dictionaryWords.stream().forEach((dictionaryWord) -> {
+                sb.append(" ").append(dictionaryWord).append(",");
+            });
+            sb.deleteCharAt(sb.length()-1).append("\n");
+        });
+        
+        System.out.println(sb.toString());
     }
 
 }
