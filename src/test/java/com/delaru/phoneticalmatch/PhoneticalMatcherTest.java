@@ -2,6 +2,8 @@ package com.delaru.phoneticalmatch;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,50 +17,38 @@ import static org.hamcrest.CoreMatchers.*;
 public class PhoneticalMatcherTest {
 
     private PhoneticalMatcher phoneticalMatcher;
-    private Set<String> words;
-    private File dictionary;
 
     @Before
     public void setUp() {
-        words = new HashSet<>();
+        Set<String> words = new HashSet<>();
         words.add("1ton#");
         words.add("brief");
         words.add("soon");
 
         ClassLoader classLoader = getClass().getClassLoader();
-        dictionary = new File(classLoader.getResource("word_dict.txt").getFile());
+        File dictionaryFile = new File(classLoader.getResource("word_dict.txt").getFile());
+
+        phoneticalMatcher = new PhoneticalMatcher(words, dictionaryFile);
     }
 
     @Test
-    public void shouldLoadWordsFromTextFile() {
-        phoneticalMatcher = new PhoneticalMatcher(words, dictionary);
+    public void shouldMatchWordsInTheDictionary() {
+        Map<String, List<String>> matchedWords = phoneticalMatcher.getMatchedWords();
+        assertThat(matchedWords.size(), is(equalTo(3)));
 
-        Set<String> dictionary = phoneticalMatcher.getDictionary();
+        List<String> matchedWordsForString = matchedWords.get("1ton#");
 
-        assertThat(dictionary.size(), is(equalTo(11)));
-        assertThat(dictionary, hasItems("son", "angel", "Engel", "Braev"));
+        assertThat(matchedWordsForString.size(), is(equalTo(3)));
+        assertThat(matchedWordsForString, hasItems("Don", "Tom", "Tooonnnnyyyy"));
+
+        matchedWordsForString = matchedWords.get("brief");
+
+        assertThat(matchedWordsForString.size(), is(equalTo(2)));
+        assertThat(matchedWordsForString, hasItems("brave", "Braev"));
+
+        matchedWordsForString = matchedWords.get("soon");
+
+        assertThat(matchedWordsForString.size(), is(equalTo(2)));
+        assertThat(matchedWordsForString, hasItems("son", "sunny"));
     }
-
-    @Test
-    public void shouldNormalizeAllWordsInDictionary() {
-        phoneticalMatcher = new PhoneticalMatcher(words, dictionary);
-        phoneticalMatcher.normalize();
-
-        Set<String> dictionary = phoneticalMatcher.getDictionary();
-
-        assertThat(dictionary.size(), is(equalTo(9)));
-        assertThat(dictionary, hasItems("sn", "angl", "engl", "brv", "dn", "g", "gl", "tm","tn"));
-    }
-    
-    @Test
-    public void shouldNormalizeAllArgumentWords() {
-        phoneticalMatcher = new PhoneticalMatcher(words, dictionary);
-        phoneticalMatcher.normalize();
-
-        Set<String> argumentWords = phoneticalMatcher.getArgumentWords();
-
-        assertThat(argumentWords.size(), is(equalTo(3)));
-        assertThat(argumentWords, hasItems("tn", "brf", "sn"));
-    }
-
 }

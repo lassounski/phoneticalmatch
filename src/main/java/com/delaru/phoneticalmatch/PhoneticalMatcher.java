@@ -1,18 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.delaru.phoneticalmatch;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -20,42 +18,69 @@ import java.util.stream.Collectors;
  */
 public class PhoneticalMatcher {
 
-    private Set<String> argumentWords;
-    private Set<String> dictionary;
-    private final File dictionaryFile;
+    private final Map<MatchableString, List<String>> argumentWords;
+    private final Map<MatchableString, List<String>> dictionary;
+    private Map<String, List<String>> matchedWords;
 
-    PhoneticalMatcher(Set<String> words, File dictionary) {
-        this.argumentWords = words;
-        this.dictionaryFile = dictionary;
-        loadWordsFromFile();
+    PhoneticalMatcher(Set<String> words, File dictionaryFile) {
+        Set<String> dictionaryWords = loadWordsFromDictionaryFile(dictionaryFile);
+        
+        dictionary = normalize(dictionaryWords);
+        argumentWords = normalize(words);
+        
+        matchWords();
     }
 
-    public Set<String> getDictionary() {
-        return dictionary;
+    public Map<String, List<String>> getMatchedWords() {
+        return matchedWords;
     }
 
-    public Set<String> getArgumentWords() {
-        return argumentWords;
-    }
-
-    private void loadWordsFromFile() {
+    private Set<String> loadWordsFromDictionaryFile(File dictionaryFile) {
         try {
-            dictionary = new HashSet<>(Files.readAllLines(dictionaryFile.toPath()));
+            return new HashSet<>(Files.readAllLines(dictionaryFile.toPath()));
         } catch (IOException ex) {
             Logger.getLogger(PhoneticalMatcher.class.getName()).log(Level.SEVERE, "There was an error while reading the dictionary file", ex);
             System.exit(-1);
         }
+        return new HashSet();
     }
 
-    public void normalize() {
+    /**
+     * Transforms a set of regular Strings into a Map which is indexed by the
+     * normalized form of the word and contains all the strings that fit into
+     * that word category
+     *
+     * @param wordSet
+     * @return
+     */
+    private Map<MatchableString, List<String>> normalize(Set<String> wordSet) {
+        Map<MatchableString, List<String>> normalizedMap = new HashMap<>();
         LexicalNormalizer normalizer = new LexicalNormalizer();
 
-        dictionary = dictionary.stream()
-                .map(word -> normalizer.normalize(word))
-                .collect(Collectors.toSet());
-        argumentWords = argumentWords.stream()
-                .map(word -> normalizer.normalize(word))
-                .collect(Collectors.toSet());
+        wordSet.stream().forEach((word) -> {
+            MatchableString normalizedWord = new MatchableString(normalizer.normalize(word));
+
+            if (normalizedMap.containsKey(normalizedWord)) {
+                normalizedMap.get(normalizedWord).add(word);
+            } else {
+                List<String> words = new ArrayList<>();
+
+                words.add(word);
+                normalizedMap.put(normalizedWord, words);
+            }
+        });
+        return normalizedMap;
     }
 
+    private void matchWords() {
+        matchedWords = new HashMap<>();
+        
+        argumentWords.forEach((matchableArgument,arguments) -> {
+            List<String> dictionaryWords = dictionary.get(matchableArgument);
+            
+            arguments.stream().forEach((argument) -> {
+                matchedWords.put(argument, dictionaryWords);
+            });
+        });
+    }
 }

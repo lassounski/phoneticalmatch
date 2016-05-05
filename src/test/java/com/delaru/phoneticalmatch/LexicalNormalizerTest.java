@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.*;
  */
 public class LexicalNormalizerTest {
 
-    private LexicalNormalizer lexicalNormalizer = new LexicalNormalizer();
+    private final LexicalNormalizer lexicalNormalizer = new LexicalNormalizer();
 
     @Test
     public void shouldRemoveNonAlphabeticCharactersFromWord() {
