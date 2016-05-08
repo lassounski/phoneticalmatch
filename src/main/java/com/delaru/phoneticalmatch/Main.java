@@ -56,7 +56,7 @@ public class Main {
     }
 
     private static void print(Map<String, List<String>> matchedWords) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("\n");
         
         matchedWords.forEach((argument, dictionaryWords) -> {
             sb.append(argument).append(":");
