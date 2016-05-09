@@ -17,7 +17,7 @@ Next, access the folder and issue a Maven command to build the project:
 $ cd phoneticalmatch
 $ mvn install
 ```
-Last but not least, execute the program with Java through Maven(beware of the version number that needs to be filled correctly):
+Last but not least, execute the program with Java through Maven:
 ```
 $ mvn exec:java -Dexec.args="word1 word2 word3 ./path_to/dictionary.txt"
 ```
