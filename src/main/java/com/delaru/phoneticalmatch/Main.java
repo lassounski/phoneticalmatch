@@ -35,7 +35,7 @@ public class Main {
         if (args.length < 2) {
             System.out.println("Invalid parameters count: (" + args.length + ") parameter passed to the program\n");
             System.out.println("The program accepts any number of words to be phonetically matched in a line and the last parameter is the path to the .txt file that has the dictionary to be matched.\n");
-            System.out.println("Ex: java -jar phoneticalmatch-0.1.0.jar word1 word2 dictionary.txt");
+            System.out.println("Ex: mvn exec:java -Dexec.args=\"1ton# brief soon word_dict.txt\"");
             System.exit(-1);
         }
 
