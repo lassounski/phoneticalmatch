@@ -14,7 +14,7 @@ $ git clone https://github.com/lassounski/phoneticalmatch.git
 ```
 Next, access the folder and issue a Maven command to build the project:
 ```
-$ cd foneticalmatch
+$ cd phoneticalmatch
 $ mvn install
 ```
 Last but not least, execute the program with Java through Maven(beware of the version number that needs to be filled correctly):
